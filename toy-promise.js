@@ -223,3 +223,17 @@ ToyPromise.resolve = (value) => {
 ToyPromise.reject = (reason) => {
   return new ToyPromise((_, reject) => reject(reason))
 }
+
+// 实现 race 暂时使用数组表示 iterable
+ToyPromise.race = (promises) => {
+  // 因为返回的也是一个 promise 所以需要创建一个新的 promise
+  const nextPromise = new ToyPromise()
+  for (const p of promises) {
+    // 因为只有最先改变状态的 promise 才会将结果传递给返回的 nextPromise
+    p.then(
+      value => nextPromise._onFulfilled(value),
+      reason => nextPromise._onRejected(reason)
+    )
+  }
+  return nextPromise
+}
