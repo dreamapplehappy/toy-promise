@@ -4,9 +4,10 @@ const TestPromise = 1 ? Promise : ToyPromise
 console.log(`当前的 Promise 是：${TestPromise === Promise ? 'Promise' : 'ToyPromise'}`)
 
 const p1 = new TestPromise((resolve, reject) => {
-  // resolve(1)
+  console.log(233)
+  resolve(1)
   // reject(0)
-  throw new Error('computation error')
+  // throw new Error('computation error')
   // TODO 只有第一次的 resolve 起作用
   // resolve(2)
 })
