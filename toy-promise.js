@@ -15,7 +15,7 @@ const isThenable = (value) => value && (typeof value.then === 'function')
 // eslint-disable-next-line no-unused-vars
 class ToyPromise {
   // TODO 使用私有属性实现一遍 需要升级 eslint
-  constructor (computation) {
+  constructor (computation, isAsync = true) {
     // 定义 promise 的初始状态
     this._state = states.PENDING
     // 定义初始的 promise 被完成的值
@@ -32,8 +32,7 @@ class ToyPromise {
     // TODO 判断 computation 是否是函数
     if (computation) {
       // 异步执行 computation 函数
-      // TODO 暂时使用 setTimeout 代替，后续可以优化
-      setTimeout(() => {
+      const fn = () => {
         try {
           computation(
             // bind(this) 是为了在方法内部可以获取当前 promise 的 this
@@ -44,7 +43,14 @@ class ToyPromise {
           // 处理抛出的异常
           this._onRejected(e)
         }
-      })
+      }
+      if (isAsync) {
+        // TODO 暂时使用 setTimeout 代替，后续可以优化
+        setTimeout(fn)
+      } else {
+        // 用于 ToyPromise.all 处理同步返回的 promise
+        fn()
+      }
     }
   }
 
@@ -236,4 +242,13 @@ ToyPromise.race = (promises) => {
     )
   }
   return nextPromise
+}
+
+ToyPromise.all = (promises) => {
+  // 首先判断 数组是否为空，如果是个空数组需要立即返回一个 同步的状态是被解决的 promise
+  if (promises.length === 0) {
+    return new ToyPromise((resolve) => {
+      resolve([])
+    }, false)
+  }
 }

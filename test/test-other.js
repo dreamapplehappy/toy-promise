@@ -1,6 +1,12 @@
 // eslint-disable-next-line no-constant-condition,no-undef
 const TestPromise = 0 ? Promise : ToyPromise
 
+const ta1 = TestPromise.all([])
+console.log(ta1, 'ta1')
+
+/**
+ * Test Promise.race
+ */
 TestPromise.race([
   TestPromise.resolve(10),
   TestPromise.resolve(20)
